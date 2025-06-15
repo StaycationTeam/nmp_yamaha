@@ -7,7 +7,7 @@ import com.squareup.picasso.Picasso
 import com.yamaha.healingyuk.databinding.ItemHealingPlaceBinding
 import com.yamaha.healingyuk.HealingPlace
 
-class HealingAdapter(
+class   HealingAdapter(
     private val items: List<HealingPlace>,
     private val onReadMoreClicked: (HealingPlace) -> Unit
 ) : RecyclerView.Adapter<HealingAdapter.ViewHolder>() {

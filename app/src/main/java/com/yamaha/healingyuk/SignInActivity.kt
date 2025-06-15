@@ -10,6 +10,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 
 class SignInActivity : AppCompatActivity() {
 
@@ -27,11 +31,14 @@ class SignInActivity : AppCompatActivity() {
         val passwordInput = findViewById<EditText>(R.id.inputPassword)
         val btnLogin = findViewById<Button>(R.id.btnLogin)
         val txtRegister = findViewById<TextView>(R.id.txtRegist)
+
+        // Navigasi ke Sign Up Activity
         txtRegister.setOnClickListener {
             val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
         }
 
+        // Login button click listener
         btnLogin.setOnClickListener {
             val email = emailInput.text.toString().trim()
             val password = passwordInput.text.toString()
@@ -41,13 +48,45 @@ class SignInActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Kalau semua valid, lanjut
-            Toast.makeText(this, "Login sukses!", Toast.LENGTH_SHORT).show()
-            // Misalnya lanjut ke halaman login
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
+            // Mengirimkan data login ke server menggunakan Volley
+            loginToServer(email, password)
         }
     }
 
+    // Fungsi untuk mengirim data login ke server
+    private fun loginToServer(email: String, password: String) {
+        val url = "http://10.0.2.2/Webprog/login.php"  // Ganti dengan URL server kamu yang benar
 
+        val params = HashMap<String, String>()
+        params["email"] = email
+        params["password"] = password
+
+        // Membuat permintaan POST menggunakan Volley
+        val stringRequest = object : StringRequest(
+            Request.Method.POST, url,
+            Response.Listener<String> { response ->
+                // Menangani respons dari server
+                if (response.contains("success")) {
+                    Toast.makeText(this, "Login sukses!", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, MainActivity::class.java))  // Arahkan ke Main Activity
+                    finish()
+                } else {
+                    Toast.makeText(this, "Login gagal: $response", Toast.LENGTH_SHORT).show()
+                }
+            },
+            Response.ErrorListener { error ->
+                // Menangani error
+                error.printStackTrace()
+                Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        ) {
+            override fun getParams(): Map<String, String> {
+                return params  // Mengirimkan data login ke server
+            }
+        }
+
+        // Menambahkan request ke dalam request queue
+        val queue = Volley.newRequestQueue(this)
+        queue.add(stringRequest)
+    }
 }
