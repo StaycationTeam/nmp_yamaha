@@ -14,9 +14,6 @@ import androidx.fragment.app.Fragment
 import com.yamaha.healingyuk.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-//    private lateinit var drawerLayout: DrawerLayout
-//    private lateinit var navView: NavigationView
-//    private lateinit var toolbar: MaterialToolbar
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,18 +27,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-//        drawerLayout = findViewById(R.id.drawerLayout)
-//        navView = findViewById(R.id.navigationView)
-//        toolbar = findViewById(R.id.topAppBar)
-
         setSupportActionBar(binding.topAppBar)
-
-//        val toggle = ActionBarDrawerToggle(
-//            this, drawerLayout, toolbar,
-//            R.string.navigation_drawer_open,
-//            R.string.navigation_drawer_close
-//        )
-//        drawerLayout.addDrawerListener(toggle)
 
         val toggle = ActionBarDrawerToggle(
             this, binding.drawerLayout, binding.topAppBar,
@@ -72,14 +58,6 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             binding.bottomNav.selectedItemId = R.id.itemExplore
         }
-//        navView.setNavigationItemSelectedListener {
-//            when (it.itemId) {
-//                R.id.changePassword -> Toast.makeText(this, "Change Password", Toast.LENGTH_SHORT).show()
-//                R.id.logout -> Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show()
-//            }
-//            drawerLayout.closeDrawers()
-//            true
-//        }
     }
     private fun loadFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
