@@ -1,19 +1,28 @@
 <resources>
     <string name="app_name">Healing Yuk</string>
-    <string name="welcome">"Welcome !"</string>
+    <string name="welcome">Welcome!</string>
     <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
-    <string name="btn_login">Login</string>
+    <string name="invalid_password">Password must be &gt; 5 characters</string>
+    <string name="login_failed">Login failed</string>
+
+    <!-- Hints -->
     <string name="hint_name">Masukkan Nama Lengkap</string>
     <string name="hint_email">Masukkan email</string>
     <string name="hint_password">Masukkan Password</string>
     <string name="hint_repassword">Masukkan Ulang Password</string>
+
+    <!-- Button -->
+    <string name="btn_login">Login</string>
     <string name="btn_register">Register</string>
+
+    <!-- Links -->
     <string name="register_link">Don\'t Have Account? Click Here!</string>
     <string name="login_link">Already Have Account? Click Here!</string>
+
+    <!-- Drawer -->
     <string name="navigation_drawer_open">Open drawer</string>
     <string name="navigation_drawer_close">Close drawer</string>
-    <!-- TODO: Remove or change this placeholder text -->
+
+    <!-- Placeholder -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
