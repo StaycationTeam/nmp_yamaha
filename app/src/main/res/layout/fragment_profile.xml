@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient"
     tools:context=".ProfileFragment">
 
     <LinearLayout
@@ -13,36 +14,73 @@
         android:layout_gravity="top"
         android:gravity="center_horizontal">
 
+        <!-- Optional: Logo -->
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_leaf"
+            android:layout_gravity="center"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Profile Anda"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Name -->
         <EditText
             android:id="@+id/txtName"
-            android:layout_width="364dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="text"
-            android:text="Name" />
+            android:hint="Name"
+            android:padding="12dp"
+            android:textColor="#000000"
+            android:textColorHint="#777"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginBottom="12dp" />
 
+        <!-- Email -->
         <EditText
             android:id="@+id/txtEmail"
-            android:layout_width="364dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
+            android:hint="mail@gmail.com"
             android:inputType="textEmailAddress"
-            android:text="mail@gmail.com" />
+            android:padding="12dp"
+            android:textColor="#000000"
+            android:textColorHint="#777"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginBottom="12dp" />
 
+        <!-- Tanggal -->
         <EditText
             android:id="@+id/editTextDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="date"
-            android:text="6/13/2025" />
+            android:hint="6/14/2025"
+            android:focusable="false"
+            android:padding="12dp"
+            android:textColor="#000000"
+            android:textColorHint="#777"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginBottom="12dp" />
 
+        <!-- Angka -->
         <EditText
             android:id="@+id/txtNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="numberSigned"
-            android:text="3" />
+            android:hint="3"
+            android:inputType="number"
+            android:padding="12dp"
+            android:textColor="#000000"
+            android:textColorHint="#777"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginBottom="12dp" />
     </LinearLayout>
 </FrameLayout>
