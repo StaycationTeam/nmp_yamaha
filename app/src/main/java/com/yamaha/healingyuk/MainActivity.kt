@@ -1,15 +1,11 @@
 package com.yamaha.healingyuk
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.drawerlayout.widget.DrawerLayout
-import com.google.android.material.navigation.NavigationView
-import android.widget.Toast
-import androidx.appcompat.app.ActionBarDrawerToggle
-import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.fragment.app.Fragment
 import com.yamaha.healingyuk.databinding.ActivityMainBinding
 
@@ -21,14 +17,17 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.drawerLayout)) { v, insets ->
+        // ✅ Ganti findViewById dengan binding
+        ViewCompat.setOnApplyWindowInsetsListener(binding.drawerLayout) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
+        // Set toolbar
         setSupportActionBar(binding.topAppBar)
 
+        // Drawer toggle
         val toggle = ActionBarDrawerToggle(
             this, binding.drawerLayout, binding.topAppBar,
             R.string.navigation_drawer_open, R.string.navigation_drawer_close
@@ -36,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
+        // Menu di drawer kiri
         binding.navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.changePassword -> Toast.makeText(this, "Change Password", Toast.LENGTH_SHORT).show()
@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
+        // Bottom nav bar
         binding.bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.itemExplore -> loadFragment(ExploreFragment())
@@ -54,11 +55,12 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        // Load default fragment
+        // Load default fragment saat pertama kali
         if (savedInstanceState == null) {
             binding.bottomNav.selectedItemId = R.id.itemExplore
         }
     }
+
     private fun loadFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
