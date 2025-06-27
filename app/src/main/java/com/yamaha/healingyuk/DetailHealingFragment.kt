@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.squareup.picasso.Picasso
 import com.yamaha.healingyuk.databinding.FragmentDetailHealingBinding
 
 class DetailHealingFragment : Fragment() {
@@ -44,13 +45,19 @@ class DetailHealingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         arguments?.let {
             binding.tvName.text = it.getString("name")
-            // Untuk foto, gunakan Glide atau Picasso
-            // Contoh dengan Glide:
-            // Glide.with(this).load(it.getString("photoUrl")).into(binding.ivPhoto)
-
             binding.tvCategory.text = it.getString("category")
             binding.tvShortDesc.text = it.getString("shortDesc")
             binding.tvFullDesc.text = it.getString("fullDesc")
+
+            // Gambar dengan Picasso
+            val photoUrl = it.getString("photoUrl")
+            if (!photoUrl.isNullOrEmpty()) {
+                Picasso.get()
+                    .load(photoUrl)
+                    .placeholder(R.drawable.placeholder_image) // Optional, gambar saat loading
+                    .error(R.drawable.error_image) // Optional, gambar jika gagal load
+                    .into(binding.ivPhoto)
+            }
 
             binding.btnAddToFavorite.setOnClickListener {
                 // Logika tambah ke favorite di sini

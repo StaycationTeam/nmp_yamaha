@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Toolbar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/topAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:title="New Location"
+        android:titleTextColor="@android:color/white"
+        app:navigationIcon="@drawable/ic_back" />
+
+    <!-- Scroll content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <!-- isi form -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Header -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="New Location"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:paddingBottom="16dp" />
+
+            <!-- Location Name -->
+            <EditText
+                android:id="@+id/etLocationName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Location Name"
+                android:inputType="textPersonName"
+                android:paddingVertical="8dp"/>
+
+            <!-- Category Spinner -->
+            <Spinner
+                android:id="@+id/spinnerCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"/>
+
+            <!-- Photo URL -->
+            <EditText
+                android:id="@+id/etPhotoUrl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Photo URL"
+                android:inputType="textUri"
+                android:layout_marginTop="8dp"/>
+
+            <!-- Short Description -->
+            <EditText
+                android:id="@+id/etShortDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Short Description"
+                android:inputType="text"
+                android:layout_marginTop="8dp"/>
+
+            <!-- Description -->
+            <EditText
+                android:id="@+id/etDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Description"
+                android:inputType="textMultiLine"
+                android:minLines="4"
+                android:gravity="top"
+                android:layout_marginTop="8dp"/>
+
+            <!-- Button Add -->
+            <Button
+                android:id="@+id/btnAddLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add Location"
+                android:layout_marginTop="16dp"/>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

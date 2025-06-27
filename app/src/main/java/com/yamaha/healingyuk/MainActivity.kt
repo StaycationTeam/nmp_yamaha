@@ -1,5 +1,6 @@
 package com.yamaha.healingyuk
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -38,8 +39,12 @@ class MainActivity : AppCompatActivity() {
         // Menu di drawer kiri
         binding.navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.changePassword -> Toast.makeText(this, "Change Password", Toast.LENGTH_SHORT).show()
-                R.id.logout -> Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show()
+                R.id.changePassword -> {
+                    startActivity(Intent(this, ChangePasswordActivity::class.java))
+                }
+                R.id.logout -> {
+                    Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show()
+                }
             }
             binding.drawerLayout.closeDrawers()
             true
