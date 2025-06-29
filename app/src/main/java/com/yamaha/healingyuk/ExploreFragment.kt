@@ -8,19 +8,21 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.volley.Response
+import com.android.volley.toolbox.Volley
 import com.yamaha.healingyuk.adapter.HealingAdapter
 import com.yamaha.healingyuk.databinding.FragmentExploreBinding
+import org.json.JSONObject
 
 class ExploreFragment : Fragment() {
 
     private var _binding: FragmentExploreBinding? = null
     private val binding get() = _binding!!
 
-    private val healingPlaces = listOf(
-        HealingPlace("Cafe Healing", "Tempat santai dengan kopi enak.", "Cafe", "https://example.com/image1.jpg"),
-        HealingPlace("Resto Sehat", "Makanan sehat dan pemandangan indah.", "Resto", "https://example.com/image2.jpg"),
-        HealingPlace("Warkop Nostalgia", "Ngopi sambil bernostalgia.", "Warkop", "https://example.com/image3.jpg")
-    )
+    private val healingPlaces = mutableListOf<HealingPlace>()
+    private lateinit var adapter: HealingAdapter
+
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentExploreBinding.inflate(inflater, container, false)
@@ -30,13 +32,10 @@ class ExploreFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = HealingAdapter(healingPlaces) { place ->
+        adapter = HealingAdapter(healingPlaces) { place: HealingPlace ->
             val detailFragment = DetailHealingFragment().apply {
                 arguments = Bundle().apply {
-                    putString("name", place.name)
-                    putString("shortDescription", place.shortDescription)
-                    putString("category", place.category)
-                    putString("imageUrl", place.imageUrl)
+                    putParcelable("healingPlace", place)
                 }
             }
             parentFragmentManager.beginTransaction()
@@ -44,14 +43,55 @@ class ExploreFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
+
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.adapter = adapter
+
         binding.fabAdd.setOnClickListener {
             val intent = Intent(requireContext(), AddLocationActivity::class.java)
             startActivity(intent)
         }
 
+        fetchHealingPlacesFromServer()
+    }
 
-        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerView.adapter = adapter
+    private fun fetchHealingPlacesFromServer() {
+        val url = "http://10.0.2.2/nmp_yamaha/get_all_places.php"
+        val stringRequest = object : com.android.volley.toolbox.StringRequest(
+            Method.GET, url,
+            Response.Listener { response ->
+                try {
+                    val json = JSONObject(response)
+                    if (json.getString("status") == "success") {
+                        val dataArray = json.getJSONArray("data")
+                        healingPlaces.clear()
+                        for (i in 0 until dataArray.length()) {
+                            val obj = dataArray.getJSONObject(i)
+                            val place = HealingPlace(
+                                obj.getString("name"),
+                                obj.getString("short_description"),
+                                obj.getString("category"),
+                                obj.getString("image_url"),
+                                obj.getString("long_description")
+                            )
+                            healingPlaces.add(place)
+                        }
+                        adapter.notifyDataSetChanged()
+                    } else {
+                        Toast.makeText(requireContext(), "Gagal memuat data", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(requireContext(), "Response format error", Toast.LENGTH_SHORT).show()
+                }
+            },
+            Response.ErrorListener { error ->
+                error.printStackTrace()
+                Toast.makeText(requireContext(), "Request error: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        ) {}
+
+        Volley.newRequestQueue(requireContext()).add(stringRequest)
     }
 
     override fun onDestroyView() {
@@ -59,3 +99,4 @@ class ExploreFragment : Fragment() {
         _binding = null
     }
 }
+

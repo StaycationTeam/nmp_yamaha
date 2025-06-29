@@ -8,6 +8,13 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yamaha.healingyuk.adapter.FavoritesAdapter
 import com.yamaha.healingyuk.databinding.FragmentFavoritesBinding
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import org.json.JSONObject
+import android.widget.Toast
+import com.android.volley.Response
+import androidx.appcompat.app.AppCompatActivity
+
 
 class FavoritesFragment : Fragment() {
 
@@ -15,6 +22,7 @@ class FavoritesFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val favourites = mutableListOf<HealingPlace>() // Bisa diganti dengan data dari database nanti
+    private lateinit var adapter: FavoritesAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -25,18 +33,63 @@ class FavoritesFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        val sharedPref = requireActivity().getSharedPreferences("user_session", AppCompatActivity.MODE_PRIVATE)
+        val email = sharedPref.getString("email", null)
 
-        // Dummy data favorit
-        favourites.addAll(listOf(
-            HealingPlace("Healing Cafe", "Tempat ngopi santai", "Cafe", "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nrg5lR_szeluo7QamLyQULN4lXa4YgKS2EDtJ1l-jjlGAqBcGVwMJGzBb8jS3zMjfrnXBy0_PVi10d2uoZ-QkFc7bRqMV-4GbbfGt9QVuyOHsI_x2-2Sk1MF9WalFTkn_BtYTtb=w408-h306-k-no"),
-            HealingPlace("Arcade Center", "Tempat hiburan klasik", "Arcade", "https://lh3.googleusercontent.com/gps-cs-s/AC9h4npYYjyFE4PN8IZUUXwRi5oY1AFdyss2fPlyXQeTZhCArLiZvBks4_mVVoUqoGgWWWHzGbr-RUVzGo7SpM8p9pv1v0dMp8-ReXgufC3frQ9fNt-wr7av5QolP9eHCOOPeFvG0Vds=w408-h306-k-no")
-        ))
-
-        val adapter = FavoritesAdapter(favourites)
+        adapter = FavoritesAdapter(favourites)
         binding.recyclerFavourites.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerFavourites.adapter = adapter
+
+        if (email != null) {
+            fetchFavoritesFromServer(email)
+        } else {
+            Toast.makeText(requireContext(), "User belum login", Toast.LENGTH_SHORT).show()
+        }
     }
+
+    private fun fetchFavoritesFromServer(email: String) {
+        val url = "http://10.0.2.2/nmp_yamaha/get_favorites.php"
+
+        val request = object : StringRequest(Method.POST, url,
+            Response.Listener { response ->
+                try {
+                    val json = JSONObject(response)
+                    if (json.getString("status") == "success") {
+                        val dataArray = json.getJSONArray("data")
+                        favourites.clear()
+                        for (i in 0 until dataArray.length()) {
+                            val obj = dataArray.getJSONObject(i)
+                            val place = HealingPlace(
+                                obj.getString("name"),
+                                obj.getString("short_description"),
+                                obj.getString("category"),
+                                obj.getString("image_url"),
+                                obj.getString("long_description")
+                            )
+                            favourites.add(place)
+                        }
+                        adapter.notifyDataSetChanged()
+                    } else {
+                        Toast.makeText(requireContext(), "Gagal memuat data favorit", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(requireContext(), "Format response error", Toast.LENGTH_SHORT).show()
+                }
+            },
+            Response.ErrorListener { error ->
+                error.printStackTrace()
+                Toast.makeText(requireContext(), "Request error: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        ) {
+            override fun getParams(): MutableMap<String, String> {
+                return hashMapOf("email" to email)
+            }
+        }
+
+        Volley.newRequestQueue(requireContext()).add(request)
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

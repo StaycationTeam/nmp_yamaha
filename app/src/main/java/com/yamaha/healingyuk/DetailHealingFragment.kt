@@ -43,27 +43,26 @@ class DetailHealingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        arguments?.let {
-            binding.tvName.text = it.getString("name")
-            binding.tvCategory.text = it.getString("category")
-            binding.tvShortDesc.text = it.getString("shortDesc")
-            binding.tvFullDesc.text = it.getString("fullDesc")
 
-            // Gambar dengan Picasso
-            val photoUrl = it.getString("photoUrl")
-            if (!photoUrl.isNullOrEmpty()) {
-                Picasso.get()
-                    .load(photoUrl)
-                    .placeholder(R.drawable.placeholder_image) // Optional, gambar saat loading
-                    .error(R.drawable.error_image) // Optional, gambar jika gagal load
-                    .into(binding.ivPhoto)
-            }
+        val place = arguments?.getParcelable<HealingPlace>("healingPlace")
+        place?.let {
+            binding.tvName.text = it.name
+            binding.tvCategory.text = it.category
+            binding.tvShortDesc.text = it.shortDescription
+            binding.tvFullDesc.text = it.longDescription
+
+            Picasso.get()
+                .load(it.imageUrl)
+                .placeholder(R.drawable.placeholder_image)
+                .error(R.drawable.error_image)
+                .into(binding.ivPhoto)
 
             binding.btnAddToFavorite.setOnClickListener {
-                // Logika tambah ke favorite di sini
+                // Logic untuk tambah ke favorite
             }
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
