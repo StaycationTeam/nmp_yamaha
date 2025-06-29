@@ -13,16 +13,6 @@ import com.android.volley.toolbox.Volley
 import com.yamaha.healingyuk.databinding.FragmentProfileBinding
 import org.json.JSONObject
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ProfileFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
@@ -46,7 +36,6 @@ class ProfileFragment : Fragment() {
         } else {
             Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
         }
-
     }
 
     private fun fetchUserData(email: String) {
@@ -63,41 +52,37 @@ class ProfileFragment : Fragment() {
                     if (json.getString("status") == "success") {
                         val data = json.getJSONObject("data")
                         val name = data.getString("name")
-                        val email = data.getString("email")
+                        val emailRes = data.getString("email")
                         val dateJoined = data.getString("joined_at")
+                        val favorites = data.getInt("favorites")
 
                         // Update UI
                         binding.txtName.setText(name)
-                        binding.txtEmail.setText(email)
+                        binding.txtEmail.setText(emailRes)
                         binding.editTextDate.setText(dateJoined)
+                        binding.txtNumber.setText(favorites.toString())
 
-
-                        // Simpan nilai asli
+                        // Disable save button awalnya
                         var originalName = name
-                        var originalEmail = email
-
+                        var originalEmail = emailRes
                         binding.btnSaveChanges.isEnabled = false
 
                         val watcher = object : android.text.TextWatcher {
                             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
                             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                                 val nameChanged = binding.txtName.text.toString() != originalName
                                 val emailChanged = binding.txtEmail.text.toString() != originalEmail
-
                                 binding.btnSaveChanges.isEnabled = nameChanged || emailChanged
                             }
-
                             override fun afterTextChanged(s: android.text.Editable?) {}
                         }
 
                         binding.txtName.addTextChangedListener(watcher)
                         binding.txtEmail.addTextChangedListener(watcher)
 
-                        // Aksi simpan
                         binding.btnSaveChanges.setOnClickListener {
-                            Toast.makeText(requireContext(), "Changes saved (not yet uploaded to server)", Toast.LENGTH_SHORT).show()
-                            // Di sini bisa dipanggil fungsi updateProfileToServer(...)
+                            Toast.makeText(requireContext(), "Changes saved (but not yet uploaded)", Toast.LENGTH_SHORT).show()
+                            // Implement updateProfileToServer(...) jika perlu
                         }
 
                     } else {
