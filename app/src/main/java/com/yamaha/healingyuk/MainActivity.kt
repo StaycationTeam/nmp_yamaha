@@ -9,6 +9,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.yamaha.healingyuk.databinding.ActivityMainBinding
+import androidx.core.content.edit
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -17,6 +18,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val sharedPref = getSharedPreferences("user_session", MODE_PRIVATE)
+        val isLoggedIn = sharedPref.getBoolean("is_logged_in", false)
+        val name = sharedPref.getString("name", "Guest")
+
+        // Update menu welcome
+        val menu = binding.navigationView.menu
+        val welcomeItem = menu.findItem(R.id.menu_welcome)
+        welcomeItem.title = "Welcome, $name"
+
+        if (!isLoggedIn) {
+            startActivity(Intent(this, SignInActivity::class.java))
+            finish()
+        }
 
         // ✅ Ganti findViewById dengan binding
         ViewCompat.setOnApplyWindowInsetsListener(binding.drawerLayout) { v, insets ->
@@ -43,6 +58,16 @@ class MainActivity : AppCompatActivity() {
                     startActivity(Intent(this, ChangePasswordActivity::class.java))
                 }
                 R.id.logout -> {
+                    val sharedPref = getSharedPreferences("user_session", MODE_PRIVATE)
+                    with(sharedPref.edit()) {
+                        clear()
+                        apply()
+                    }
+
+                    val intent = Intent(this, SignInActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    true
                     Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show()
                 }
             }

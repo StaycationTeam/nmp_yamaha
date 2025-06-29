@@ -3,6 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/menu_welcome"
+        android:title="Welcome, Guest"
+        android:enabled="false"
+        android:checkable="false"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/changePassword"
         android:enabled="true"
         android:icon="@drawable/lock_open_solid"

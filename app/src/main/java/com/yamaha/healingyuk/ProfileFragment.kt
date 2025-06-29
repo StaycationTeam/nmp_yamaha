@@ -5,6 +5,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import com.yamaha.healingyuk.databinding.FragmentProfileBinding
+import org.json.JSONObject
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -17,43 +24,105 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class ProfileFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var _binding: FragmentProfileBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentProfileBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProfileFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ProfileFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val sharedPref = requireActivity().getSharedPreferences("user_session", AppCompatActivity.MODE_PRIVATE)
+        val email = sharedPref.getString("email", null)
+
+        if (email != null) {
+            fetchUserData(email)
+        } else {
+            Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+        }
+
+    }
+
+    private fun fetchUserData(email: String) {
+        val url = "http://10.0.2.2/nmp_yamaha/get_user.php"
+
+        val params = HashMap<String, String>()
+        params["email"] = email
+
+        val stringRequest = object : StringRequest(
+            Method.POST, url,
+            Response.Listener<String> { response ->
+                try {
+                    val json = JSONObject(response)
+                    if (json.getString("status") == "success") {
+                        val data = json.getJSONObject("data")
+                        val name = data.getString("name")
+                        val email = data.getString("email")
+                        val dateJoined = data.getString("joined_at")
+
+                        // Update UI
+                        binding.txtName.setText(name)
+                        binding.txtEmail.setText(email)
+                        binding.editTextDate.setText(dateJoined)
+
+
+                        // Simpan nilai asli
+                        var originalName = name
+                        var originalEmail = email
+
+                        binding.btnSaveChanges.isEnabled = false
+
+                        val watcher = object : android.text.TextWatcher {
+                            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                                val nameChanged = binding.txtName.text.toString() != originalName
+                                val emailChanged = binding.txtEmail.text.toString() != originalEmail
+
+                                binding.btnSaveChanges.isEnabled = nameChanged || emailChanged
+                            }
+
+                            override fun afterTextChanged(s: android.text.Editable?) {}
+                        }
+
+                        binding.txtName.addTextChangedListener(watcher)
+                        binding.txtEmail.addTextChangedListener(watcher)
+
+                        // Aksi simpan
+                        binding.btnSaveChanges.setOnClickListener {
+                            Toast.makeText(requireContext(), "Changes saved (not yet uploaded to server)", Toast.LENGTH_SHORT).show()
+                            // Di sini bisa dipanggil fungsi updateProfileToServer(...)
+                        }
+
+                    } else {
+                        Toast.makeText(requireContext(), json.getString("message"), Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(requireContext(), "Response format error", Toast.LENGTH_SHORT).show()
                 }
+            },
+            Response.ErrorListener { error ->
+                error.printStackTrace()
+                Toast.makeText(requireContext(), "Request error: ${error.message}", Toast.LENGTH_SHORT).show()
             }
+        ) {
+            override fun getParams(): Map<String, String> {
+                return params
+            }
+        }
+
+        Volley.newRequestQueue(requireContext()).add(stringRequest)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

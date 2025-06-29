@@ -14,6 +14,7 @@ import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import androidx.core.content.edit
 
 class SignInActivity : AppCompatActivity() {
 
@@ -65,13 +66,28 @@ class SignInActivity : AppCompatActivity() {
         val stringRequest = object : StringRequest(
             Request.Method.POST, url,
             Response.Listener<String> { response ->
-                // Menangani respons dari server
-                if (response.contains("success")) {
-                    Toast.makeText(this, "Login sukses!", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, MainActivity::class.java))  // Arahkan ke Main Activity
-                    finish()
-                } else {
-                    Toast.makeText(this, "Login gagal: $response", Toast.LENGTH_SHORT).show()
+                try {
+                    val json = org.json.JSONObject(response)
+                    if (json.getString("status") == "success") {
+                        val name = json.getString("name")  // Ambil nama dari JSON
+
+                        val sharedPref = getSharedPreferences("user_session", MODE_PRIVATE)
+                        with(sharedPref.edit()) {
+                            putString("email", email)
+                            putString("name", name)
+                            putBoolean("is_logged_in", true)
+                            apply()
+                        }
+
+                        Toast.makeText(this, "Login sukses!", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this, MainActivity::class.java))
+                        finish()
+                    } else {
+                        Toast.makeText(this, "Login gagal: ${json.getString("message")}", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(this, "Format respon tidak valid", Toast.LENGTH_SHORT).show()
                 }
             },
             Response.ErrorListener { error ->

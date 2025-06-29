@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@drawable/bg_gradient"> <!-- INI LATAR BELAKANG UTAMA -->
+    android:padding="2dp">
+<!--    android:background="@drawable/bg_gradient"> &lt;!&ndash; INI LATAR BELAKANG UTAMA &ndash;&gt;-->
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
