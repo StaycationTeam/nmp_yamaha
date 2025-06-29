@@ -27,6 +27,6 @@
         app:tint="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="3dp" />
+        android:layout_margin="24dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
