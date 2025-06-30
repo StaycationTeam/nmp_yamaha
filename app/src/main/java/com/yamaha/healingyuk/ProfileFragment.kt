@@ -81,8 +81,10 @@ class ProfileFragment : Fragment() {
                         binding.txtEmail.addTextChangedListener(watcher)
 
                         binding.btnSaveChanges.setOnClickListener {
-                            Toast.makeText(requireContext(), "Changes saved (but not yet uploaded)", Toast.LENGTH_SHORT).show()
-                            // Implement updateProfileToServer(...) jika perlu
+                            Toast.makeText(requireContext(), "Changes saved", Toast.LENGTH_SHORT).show()
+                            val updatedName = binding.txtName.text.toString()
+                            val updatedEmail = binding.txtEmail.text.toString()
+                            updateProfileToServer(email, updatedName, updatedEmail)
                         }
 
                     } else {
@@ -105,6 +107,44 @@ class ProfileFragment : Fragment() {
 
         Volley.newRequestQueue(requireContext()).add(stringRequest)
     }
+
+    private fun updateProfileToServer(oldEmail: String, newName: String, newEmail: String) {
+        val url = "https://ubaya.xyz/native/160422022/update_user.php"
+
+        val params = HashMap<String, String>()
+        params["email"] = oldEmail
+        params["name"] = newName
+        params["new_email"] = newEmail
+
+        val request = object : StringRequest(Method.POST, url,
+            Response.Listener { response ->
+                try {
+                    val json = JSONObject(response)
+                    if (json.getString("status") == "success") {
+                        Toast.makeText(requireContext(), "Data berhasil diperbarui", Toast.LENGTH_SHORT).show()
+
+                        // Simpan ke sharedPref jika email berubah
+                        val sharedPref = requireActivity().getSharedPreferences("user_session", AppCompatActivity.MODE_PRIVATE)
+                        sharedPref.edit().putString("email", newEmail).apply()
+                    } else {
+                        Toast.makeText(requireContext(), json.getString("message"), Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(requireContext(), "Response format error", Toast.LENGTH_SHORT).show()
+                }
+            },
+            Response.ErrorListener { error ->
+                error.printStackTrace()
+                Toast.makeText(requireContext(), "Request error: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        ) {
+            override fun getParams(): Map<String, String> = params
+        }
+
+        Volley.newRequestQueue(requireContext()).add(request)
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

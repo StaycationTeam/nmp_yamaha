@@ -34,8 +34,50 @@ class ChangePasswordActivity : AppCompatActivity() {
             }
 
             // TODO: Simpan perubahan password ke database/server
+            val sharedPref = getSharedPreferences("user_session", MODE_PRIVATE)
+            val email = sharedPref.getString("email", null)
+
+            if (email != null) {
+                changePassword(email, oldPass, newPass)
+            } else {
+                Toast.makeText(this, "User belum login", Toast.LENGTH_SHORT).show()
+            }
             Toast.makeText(this, "Password berhasil diubah", Toast.LENGTH_SHORT).show()
             finish() // tutup activity
         }
+    }
+
+    private fun changePassword(email: String, oldPass: String, newPass: String) {
+        val url = "https://ubaya.xyz/native/160422022/change_password.php"
+
+        val params = HashMap<String, String>()
+        params["email"] = email
+        params["old_password"] = oldPass
+        params["new_password"] = newPass
+
+        val request = object : com.android.volley.toolbox.StringRequest(
+            Method.POST, url,
+            com.android.volley.Response.Listener { response ->
+                try {
+                    val json = org.json.JSONObject(response)
+                    if (json.getString("status") == "success") {
+                        Toast.makeText(this, "Password berhasil diubah", Toast.LENGTH_SHORT).show()
+                        finish()
+                    } else {
+                        Toast.makeText(this, json.getString("message"), Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Format response error", Toast.LENGTH_SHORT).show()
+                }
+            },
+            com.android.volley.Response.ErrorListener { error ->
+                error.printStackTrace()
+                Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        ) {
+            override fun getParams(): MutableMap<String, String> = params
+        }
+
+        com.android.volley.toolbox.Volley.newRequestQueue(this).add(request)
     }
 }
