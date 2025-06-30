@@ -56,7 +56,7 @@ class ExploreFragment : Fragment() {
     }
 
     private fun fetchHealingPlacesFromServer() {
-        val url = "http://10.0.2.2/nmp_yamaha/get_all_places.php"
+        val url = "http://ubaya.xyz/native/160422022/get_all_places.php"
         val stringRequest = object : com.android.volley.toolbox.StringRequest(
             Method.GET, url,
             Response.Listener { response ->

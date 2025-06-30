@@ -56,7 +56,7 @@ class SignInActivity : AppCompatActivity() {
 
     // Fungsi untuk mengirim data login ke server
     private fun loginToServer(email: String, password: String) {
-        val url = "http://10.0.2.2/nmp_yamaha/login.php"  // Ganti dengan URL server kamu yang benar
+        val url = "http://ubaya.xyz/native/160422022/login.php"  // Ganti dengan URL server kamu yang benar
 
         val params = HashMap<String, String>()
         params["email"] = email

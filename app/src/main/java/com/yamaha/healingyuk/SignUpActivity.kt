@@ -67,7 +67,7 @@ class SignUpActivity : AppCompatActivity() {
 
     // Fungsi untuk mengirim data Sign Up ke server
     private fun signUpToServer(email: String, name: String, password: String) {
-        val url = "http://10.0.2.2/nmp_yamaha/signup.php"  // Ganti dengan URL server kamu
+        val url = "http://ubaya.xyz/native/160422022/signup.php"  // Ganti dengan URL server kamu
 
         val params = HashMap<String, String>()
         params["email"] = email
