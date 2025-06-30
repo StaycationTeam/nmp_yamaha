@@ -48,7 +48,7 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun fetchFavoritesFromServer(email: String) {
-        val url = "http://ubaya.xyz/native/160422022/get_favorites.php"
+        val url = "https://ubaya.xyz/native/160422022/get_favorites.php"
 
         val request = object : StringRequest(Method.POST, url,
             Response.Listener { response ->

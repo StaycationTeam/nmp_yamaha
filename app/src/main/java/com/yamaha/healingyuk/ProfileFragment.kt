@@ -39,7 +39,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun fetchUserData(email: String) {
-        val url = "http://ubaya.xyz/native/160422022/get_user.php"
+        val url = "https://ubaya.xyz/native/160422022/get_user.php"
 
         val params = HashMap<String, String>()
         params["email"] = email
