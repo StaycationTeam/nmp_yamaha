@@ -36,7 +36,18 @@ class FavoritesFragment : Fragment() {
         val sharedPref = requireActivity().getSharedPreferences("user_session", AppCompatActivity.MODE_PRIVATE)
         val email = sharedPref.getString("email", null)
 
-        adapter = FavoritesAdapter(favourites)
+        adapter = FavoritesAdapter(favourites) { place ->
+            val detailFragment = DetailHealingFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelable("healingPlace", place)
+                }
+            }
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, detailFragment)
+                .addToBackStack(null)
+                .commit()
+        }
+
         binding.recyclerFavourites.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerFavourites.adapter = adapter
 

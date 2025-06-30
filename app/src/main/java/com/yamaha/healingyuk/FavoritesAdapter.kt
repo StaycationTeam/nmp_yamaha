@@ -8,7 +8,8 @@ import com.yamaha.healingyuk.HealingPlace
 import com.yamaha.healingyuk.databinding.ItemFavouritePlaceBinding
 
 class FavoritesAdapter(
-    private val items: List<HealingPlace>
+    private val items: List<HealingPlace>,
+    private val onItemClick: (HealingPlace) -> Unit
 ) : RecyclerView.Adapter<FavoritesAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemFavouritePlaceBinding) : RecyclerView.ViewHolder(binding.root)
@@ -26,9 +27,12 @@ class FavoritesAdapter(
             tvName.text = place.name
             tvCategory.text = place.category
 
-            Picasso.get()
-                .load(place.imageUrl)
-                .into(ivPhoto)
+            Picasso.get().load(place.imageUrl).into(ivPhoto)
+
+            root.setOnClickListener {
+                onItemClick(place)
+            }
         }
     }
 }
+
