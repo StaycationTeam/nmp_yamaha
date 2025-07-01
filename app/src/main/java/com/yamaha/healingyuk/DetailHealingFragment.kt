@@ -12,6 +12,7 @@ import com.android.volley.toolbox.Volley
 import com.squareup.picasso.Picasso
 import com.yamaha.healingyuk.databinding.FragmentDetailHealingBinding
 import org.json.JSONObject
+import androidx.core.content.ContextCompat
 import androidx.appcompat.app.AppCompatActivity
 
 class DetailHealingFragment : Fragment() {
@@ -62,7 +63,7 @@ class DetailHealingFragment : Fragment() {
     }
 
     private fun checkFavoriteStatus(userId: String, place_id: String) {
-        val url = "https://ubaya.xyz/native/160422022/check_favorite.php"
+        val url = "https://ubaya.xyz/native/160422022/check_favorites.php"
 
         val request = object : StringRequest(Method.POST, url,
             Response.Listener { response ->
@@ -70,6 +71,7 @@ class DetailHealingFragment : Fragment() {
                     val json = JSONObject(response)
                     if (json.getString("status") == "success") {
                         val isFavorite = json.getBoolean("is_favorite")
+                        Toast.makeText(requireContext(), "Status: $isFavorite", Toast.LENGTH_SHORT).show()
                         currentPlace.isFavorite = isFavorite
                         updateFavoriteButton(isFavorite)
                     }
@@ -83,7 +85,7 @@ class DetailHealingFragment : Fragment() {
             }
         ) {
             override fun getParams(): MutableMap<String, String> {
-                return hashMapOf("userId" to userId, "place_id" to place_id)
+                return hashMapOf("user_id" to userId, "place_id" to place_id)
             }
         }
 
@@ -93,9 +95,9 @@ class DetailHealingFragment : Fragment() {
     private fun toggleFavorite(userId: String, place: HealingPlace) {
         val isAdding = !place.isFavorite
         val url = if (isAdding)
-            "https://ubaya.xyz/native/160422022/add_favorite.php"
+            "https://ubaya.xyz/native/160422022/add_favorites.php"
         else
-            "https://ubaya.xyz/native/160422022/remove_favorite.php"
+            "https://ubaya.xyz/native/160422022/remove_favorites.php"
 
         val request = object : StringRequest(Method.POST, url,
             Response.Listener { response ->
@@ -120,7 +122,7 @@ class DetailHealingFragment : Fragment() {
             }
         ) {
             override fun getParams(): MutableMap<String, String> {
-                return hashMapOf("userId" to userId, "place_id" to place.id)
+                return hashMapOf("user_id" to userId, "place_id" to place.id)
             }
         }
 
@@ -129,6 +131,10 @@ class DetailHealingFragment : Fragment() {
 
     private fun updateFavoriteButton(isFavorite: Boolean) {
         binding.btnAddToFavorite.text = if (isFavorite) "Remove from Favorites" else "Add to Favorites"
+
+        val colorRes = if (isFavorite) R.color.red else R.color.teal_700
+        val color = ContextCompat.getColor(requireContext(), colorRes)
+        binding.btnAddToFavorite.setBackgroundColor(color)
     }
 
     override fun onDestroyView() {
