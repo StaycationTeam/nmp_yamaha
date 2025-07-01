@@ -3,6 +3,9 @@ package com.yamaha.healingyuk
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import com.android.volley.Response
 import androidx.appcompat.app.AppCompatActivity
 import com.yamaha.healingyuk.databinding.ActivityAddLocationBinding
 
@@ -34,9 +37,30 @@ class AddLocationActivity : AppCompatActivity() {
             if (name.isBlank() || photoUrl.isBlank()) {
                 Toast.makeText(this, "Isi nama dan URL gambar!", Toast.LENGTH_SHORT).show()
             } else {
-                // Tambahkan ke database / tampilkan toast / kembali ke fragment sebelumnya
-                Toast.makeText(this, "Lokasi '$name' berhasil ditambahkan!", Toast.LENGTH_SHORT).show()
-                finish() // kembali ke halaman sebelumnya
+                val queue = Volley.newRequestQueue(this)
+                val url = "https://ubaya.xyz/native/160422022/add_location.php" // ganti dengan path kamu
+
+                val stringRequest = object : StringRequest(
+                    Method.POST, url,
+                    Response.Listener { response ->
+                        Toast.makeText(this, "Lokasi berhasil ditambahkan!", Toast.LENGTH_SHORT).show()
+                        finish()
+                    },
+                    Response.ErrorListener { error ->
+                        Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+                    }
+                ) {
+                    override fun getParams(): MutableMap<String, String> {
+                        val params = HashMap<String, String>()
+                        params["name"] = name
+                        params["category"] = category
+                        params["image_url"] = photoUrl
+                        params["short_description"] = shortDesc
+                        params["long_description"] = description
+                        return params
+                    }
+                }
+                queue.add(stringRequest)
             }
         }
 
