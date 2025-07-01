@@ -68,6 +68,7 @@ class ExploreFragment : Fragment() {
                         for (i in 0 until dataArray.length()) {
                             val obj = dataArray.getJSONObject(i)
                             val place = HealingPlace(
+                                obj.getString("id"),
                                 obj.getString("name"),
                                 obj.getString("short_description"),
                                 obj.getString("category"),

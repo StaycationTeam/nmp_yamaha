@@ -69,10 +69,12 @@ class SignInActivity : AppCompatActivity() {
                 try {
                     val json = org.json.JSONObject(response)
                     if (json.getString("status") == "success") {
+                        val idUser = json.getString("id_user")
                         val name = json.getString("name")  // Ambil nama dari JSON
 
                         val sharedPref = getSharedPreferences("user_session", MODE_PRIVATE)
                         with(sharedPref.edit()) {
+                            putString("id_user", idUser)
                             putString("email", email)
                             putString("name", name)
                             putBoolean("is_logged_in", true)
