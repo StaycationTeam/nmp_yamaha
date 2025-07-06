@@ -71,7 +71,6 @@ class DetailHealingFragment : Fragment() {
                     val json = JSONObject(response)
                     if (json.getString("status") == "success") {
                         val isFavorite = json.getBoolean("is_favorite")
-                        Toast.makeText(requireContext(), "Status: $isFavorite", Toast.LENGTH_SHORT).show()
                         currentPlace.isFavorite = isFavorite
                         updateFavoriteButton(isFavorite)
                     }
